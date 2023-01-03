@@ -31,4 +31,18 @@ export class ClientController {
 
         return res.status(500);
     }
+
+
+    async findById(req: Request, res: Response) {
+        const { id } = req.params;
+
+        await Client.findById(id)
+            .then(data => {
+                return res.status(200).json(data);
+            })
+            .catch(error => {
+                return res.status(400).json({ mensagem: "Cliente não encontrado." });
+            })
+
+    }
 }
