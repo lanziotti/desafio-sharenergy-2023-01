@@ -45,4 +45,29 @@ export class ClientController {
             })
 
     }
+
+
+    async update(req: Request, res: Response) {
+        const { id } = req.params;
+        const { nome, email, telefone, endereco, cpf } = req.body;
+
+        await Client.findByIdAndUpdate(id, {
+            nome: nome,
+            email: email,
+            telefone: telefone,
+            endereco: endereco,
+            cpf: cpf
+        })
+            .then(data => {
+                return res.json({ mensagem: "Dados do cliente alterados com sucesso!" });
+            })
+            .catch(error => {
+                if (error.name === "CastError") {
+                    return res.status(400).json({ mensagem: "Cliente não encontrado." });
+                }
+            })
+
+        return res.status(500);
+    }
+
 }
