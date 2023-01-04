@@ -51,6 +51,12 @@ export class ClientController {
         const { id } = req.params;
         const { nome, email, telefone, endereco, cpf } = req.body;
 
+        const client = await Client.find({ cpf, "_id": { $ne: id } });
+
+        if (client.length !== 0) {
+            return res.status(400).json({ mensagem: "Já existe existe cliente cadastrado com esse CPF." });
+        }
+
         await Client.findByIdAndUpdate(id, {
             nome: nome,
             email: email,
@@ -65,6 +71,22 @@ export class ClientController {
                 if (error.name === "CastError") {
                     return res.status(400).json({ mensagem: "Cliente não encontrado." });
                 }
+            })
+
+        return res.status(500);
+
+    }
+
+
+    async delete(req: Request, res: Response) {
+        const { id } = req.params;
+
+        await Client.findByIdAndDelete(id)
+            .then(data => {
+                return res.status(200).json({ mensagem: "Cliente excluido com sucesso!" });
+            })
+            .catch(error => {
+                return res.status(400).json({ mensagem: "Cliente não encontrado." });
             })
 
         return res.status(500);
